@@ -2,19 +2,19 @@
 
 # Tutorial
 
-Este tutorial muestra cómo configurar un contenedor de Kali Linux en GitHub Codespaces para pentesting usando herramientas de terminal y basadas en web.
+This tutorial shows how to set up a Kali Linux container in GitHub Codespaces for pentesting using terminal and web-based tools.
 
 ---
 
-## 1. Actualizar y mejorar el sistema
+## 1. Update & Upgrade System
 
 ```bash
 sudo apt update && sudo apt upgrade -y
-```
+````
 
 ---
 
-## 2. Crear directorio del proyecto (opcional)
+## 2. Create Project Directory (Optional)
 
 ```bash
 mkdir -p ~/kali-codespace
@@ -23,7 +23,7 @@ cd ~/kali-codespace
 
 ---
 
-## 3. Crear Dockerfile
+## 3. Create Dockerfile
 
 ```bash
 echo 'FROM kalilinux/kali-rolling
@@ -42,11 +42,11 @@ WORKDIR /home/rosemary
 CMD ["/bin/bash"]' > Dockerfile
 ```
 
-Notas: la contraseña root para `rosemary` es `kali`.
+**Notes:** Root password for `rosemary` is `kali`.
 
 ---
 
-## 4. Crear `docker-compose.yml`
+## 4. Create docker-compose.yml
 
 ```bash
 echo 'version: "3.8"
@@ -64,11 +64,11 @@ volumes:
   kali-data:' > docker-compose.yml
 ```
 
-Notas: el volumen `kali-data` almacena datos persistentes.
+**Notes:** Volume `kali-data` stores persistent data.
 
 ---
 
-## 5. Construir el contenedor
+## 5. Build Container
 
 ```bash
 docker compose build
@@ -76,7 +76,7 @@ docker compose build
 
 ---
 
-## 6. Ejecutar el contenedor
+## 6. Run Container
 
 ```bash
 docker compose up -d
@@ -84,7 +84,7 @@ docker compose up -d
 
 ---
 
-## 7. Acceder al contenedor Kali
+## 7. Access Kali Container
 
 ```bash
 docker exec -it kali-cs /bin/bash
@@ -92,15 +92,15 @@ docker exec -it kali-cs /bin/bash
 
 ---
 
-## Notas
+## Notes
 
-- Los contenedores en Codespaces se detienen tras un periodo de inactividad.
-- Guarda archivos importantes en el volumen (`kali-data`) o en el repositorio.
-- Usuario predeterminado: `rosemary`, contraseña root: `kali`.
+* Codespaces containers stop after idle.
+* Save important files in volume (`kali-data`) or repository.
+* Default user: `rosemary`, root password: `kali`.
 
 ---
 
-## Referencias
+## References
 
-- [Imágenes Docker de Kali Linux](https://hub.docker.com/r/kalilinux/kali-rolling)
-- [Documentación de GitHub Codespaces](https://docs.github.com/en/codespaces)
+* [Kali Linux Docker Images](https://hub.docker.com/r/kalilinux/kali-rolling)
+* [GitHub Codespaces Documentation](https://docs.github.com/en/codespaces)
