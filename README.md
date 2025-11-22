@@ -100,6 +100,50 @@ docker exec -it kali-cs /bin/bash
 
 ---
 
+## Ejecutar el script de configuración
+
+Sigue estos pasos para ejecutar el script `setup_kali_codespace.sh` que automatiza los pasos del tutorial.
+
+1. Asegúrate de estar en la carpeta del proyecto:
+
+```bash
+cd /workspaces/Kali-Codespace
+```
+
+2. Comprueba que Docker esté disponible (si trabajas en Codespaces puede no estarlo):
+
+```bash
+docker --version
+docker info
+```
+
+3. Haz el script ejecutable (si aún no lo es) y ejecútalo:
+
+```bash
+chmod +x setup_kali_codespace.sh
+./setup_kali_codespace.sh
+```
+
+Alternativa (no requiere cambiar permisos):
+
+```bash
+bash setup_kali_codespace.sh
+```
+
+Nota sobre la interacción final:
+
+- El script contiene al final `docker exec -it kali-cs /bin/bash`, lo que abrirá una shell interactiva dentro del contenedor y dejará tu terminal dentro de ese contenedor hasta que salgas (`exit` o Ctrl+D).
+- Si prefieres que el script no abra esa shell, ejecuta una versión temporal sin la línea final:
+
+```bash
+sed '/docker exec -it kali-cs \\\/bin\\\/bash/d' setup_kali_codespace.sh > /tmp/setup_noshell.sh && bash /tmp/setup_noshell.sh
+```
+
+Advertencia sobre Codespaces:
+
+- En entornos de GitHub Codespaces es posible que no tengas acceso al daemon de Docker. Si `docker` falla, ejecuta estos pasos en una máquina con Docker instalado o usa un devcontainer/VM en lugar de Docker-in-Docker.
+
+
 ## Referencias
 
 - [Imágenes Docker de Kali Linux](https://hub.docker.com/r/kalilinux/kali-rolling)
