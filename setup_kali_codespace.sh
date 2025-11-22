@@ -150,7 +150,9 @@ if [[ $NO_SHELL -eq 1 ]]; then
   exit 0
 fi
 
-echo "Opening interactive shell inside 'kali-cs' (user: rosemary, password: kali). Use 'exit' to leave." 
-docker exec -it kali-cs /bin/bash
+set -x
+echo "Opening interactive shell inside 'kali-cs' (user: rosemary, password: kali). Running initial commands and leaving you in an interactive shell."
+docker exec -it kali-cs bash -lc "clear; whoami; sudo su -c 'apt update && apt install -y fastfetch' ; fastfetch ; exec /bin/bash"
+set +x
 
 echo "Exited container shell."
