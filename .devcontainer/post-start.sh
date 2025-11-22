@@ -43,7 +43,9 @@ if [[ $- == *i* ]] && [ -x "$(command -v docker)" ]; then
     if docker ps --filter "name=^kali-cs$" --format '{{.Names}}' | grep -q '^kali-cs$'; then
       touch /tmp/.kali_auto_entered
       # Use exec so that the terminal becomes the container shell
-      exec docker exec -it kali-cs /bin/bash || true
+      # Run initial setup commands (idempotent) before handing off an interactive shell
+      exec docker exec -it kali-cs bash -lc "sudo su -c 'apt update && apt install -y fastfetch' || true; clear; whoami; fastfetch || true; exec /bin/bash" || true
+    fi
     fi
   fi
 fi
