@@ -1,0 +1,13 @@
+version: "3.8"
+
+services:
+  kali:
+    build: .
+    container_name: kali-cs
+    tty: true
+    stdin_open: true
+    volumes:
+      - kali-data:/home/
+
+volumes:
+  kali-data:
