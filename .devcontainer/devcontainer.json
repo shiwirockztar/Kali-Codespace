@@ -1,0 +1,12 @@
+{
+  "name": "Kali Codespace helper",
+  "build": {
+    "dockerfile": "../Dockerfile"
+  },
+  "postStartCommand": "bash ./.devcontainer/post-start.sh",
+  "customizations": {
+    "vscode": {
+      "extensions": []
+    }
+  }
+}
