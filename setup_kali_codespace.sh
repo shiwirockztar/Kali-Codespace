@@ -57,12 +57,17 @@ write_dockerfile() {
   if ! confirm_overwrite "$f"; then return 0; fi
   cat > "$f" <<'DOCKER'
 FROM kalilinux/kali-rolling
-
-# Instala dependencias y fastfetch en la imagen para evitar instalaciones en tiempo de ejecución
+# Instala dependencias básicas en la imagen. Las herramientas que el usuario
+# solicitó instalar al iniciar (`fastfetch` y `nmap`) se instalarán en tiempo
+# de ejecución desde el entrypoint, como pidió.
 RUN apt update && apt install -y \
     git curl wget python3 python3-pip \
-    ca-certificates build-essential sudo fastfetch \
+    ca-certificates build-essential sudo \
     && apt clean
+
+# Copiamos el entrypoint que se encargará de instalar `fastfetch` y `nmap`
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 RUN useradd -ms /bin/bash rosemary && echo "rosemary:kali" | chpasswd && adduser rosemary sudo
 RUN echo "rosemary ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
@@ -70,8 +75,34 @@ RUN echo "rosemary ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 USER rosemary
 WORKDIR /home/rosemary
 
+# El entrypoint se ejecuta (como usuario rosemary con sudo sin password)
+# y luego delega al comando por defecto (bash)
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 CMD ["/bin/bash"]
 DOCKER
+  echo "Wrote $f"
+}
+
+write_entrypoint() {
+  local f="docker-entrypoint.sh"
+  if ! confirm_overwrite "$f"; then return 0; fi
+  cat > "$f" <<'SH'
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "Running initial apt update and installing fastfetch and nmap (non-fatal)..."
+# Intentamos actualizar e instalar. No queremos que el contenedor muera por
+# un fallo de red puntual, así que las operaciones son tolerantes.
+sudo apt update -y || true
+sudo apt install -y fastfetch nmap || true
+
+# Ejecuta fastfetch si está disponible, pero no fallar si no lo está
+fastfetch || true
+
+# Ejecuta el comando por defecto (normalmente /bin/bash)
+exec "$@"
+SH
+  chmod +x "$f"
   echo "Wrote $f"
 }
 
