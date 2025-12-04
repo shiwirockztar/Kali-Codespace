@@ -58,9 +58,10 @@ write_dockerfile() {
   cat > "$f" <<'DOCKER'
 FROM kalilinux/kali-rolling
 
+# Instala dependencias y fastfetch en la imagen para evitar instalaciones en tiempo de ejecución
 RUN apt update && apt install -y \
     git curl wget python3 python3-pip \
-    ca-certificates build-essential sudo \
+    ca-certificates build-essential sudo fastfetch \
     && apt clean
 
 RUN useradd -ms /bin/bash rosemary && echo "rosemary:kali" | chpasswd && adduser rosemary sudo
@@ -152,7 +153,8 @@ fi
 
 set -x
 echo "Opening interactive shell inside 'kali-cs' (user: rosemary, password: kali). Running initial commands and leaving you in an interactive shell."
-docker exec -it kali-cs bash -lc "clear; whoami; sudo su -c 'apt update && apt install -y fastfetch' ; fastfetch ; exec /bin/bash"
+# fastfetch ya se instala durante la construcción de la imagen; ejecutamos y no fallamos si no está disponible
+docker exec -it kali-cs bash -lc "clear; whoami; fastfetch || true; exec /bin/bash"
 set +x
 
 echo "Exited container shell."
